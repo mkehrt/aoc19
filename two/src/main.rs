@@ -18,7 +18,6 @@ fn execute_binary_op(instr: &Vec<i32>, mem: &mut Vec<i32>) {
 fn execute(mem: &mut Vec<i32>) {
     let mut pc = 0;
     loop {
-        println!("{:?}", mem);
         let instr = mem[pc];
         match instr {
             99 => break,
@@ -34,16 +33,27 @@ fn main() {
     let input = &args[1];
     let contents = fs::read_to_string(input).unwrap();
 
-    let mut mem: Vec<i32> = contents
+    let initial_mem: Vec<i32> = contents
         .trim()
         .split(",")
         .map(|x| x.parse::<i32>().unwrap())
         .collect();
 
-    mem[1] = 12;
-    mem[2] = 2;
+    'outer: for noun in 1..100 {
+        for verb in 1..100 {
+            let mut mem = initial_mem.clone();
 
-    execute(&mut mem);
+            mem[1] = noun;
+            mem[2] = verb;
 
-    println!("{:?}", mem[0]);
+            execute(&mut mem);
+
+            let output = mem[0];
+
+            if output == 19690720 {
+                println!("{:}", noun * 100 + verb);
+                break 'outer;
+            }
+        }
+    }
 }
